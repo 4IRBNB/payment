@@ -19,4 +19,6 @@ public interface PaymentRepository {
   Page<Payment> findAll(Pageable pageable);
 
   Optional<Payment> findByReservationId(UUID reservationId);
+
+  void deleteById(UUID paymentId);
 }

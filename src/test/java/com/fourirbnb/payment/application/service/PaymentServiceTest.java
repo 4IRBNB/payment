@@ -3,7 +3,9 @@ package com.fourirbnb.payment.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.fourirbnb.common.exception.ResourceNotFoundException;
 import com.fourirbnb.payment.PaymentApplication;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
@@ -133,5 +135,19 @@ class PaymentServiceTest {
 
     assertNotNull(updatePayment);
     assertNotEquals(paymentStatus.getStatus(), updatePayment.paymentStatus());
+  }
+
+  @Test
+  @DisplayName("결제 삭제 테스트")
+  @Order(6)
+  void deletePayment() {
+
+    PaymentResponseInternalDto deletePayment = paymentService.deletePaymentById(paymentId);
+
+    log.info("Delete Payment Id : {}", deletePayment.id());
+
+    assertThrows(ResourceNotFoundException.class, () -> {
+      paymentService.getPaymentById(paymentId);
+    });
   }
 }

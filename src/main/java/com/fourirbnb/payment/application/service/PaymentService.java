@@ -77,4 +77,14 @@ public class PaymentService {
 
     return PaymentMapper.toResponse(payment);
   }
+
+  public PaymentResponseInternalDto deletePaymentById(UUID paymentId) {
+
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new ResourceNotFoundException("결제 삭제 실패 : 존재하지 않는 결제 정보"));
+
+    paymentRepository.deleteById(paymentId);
+
+    return PaymentMapper.toResponse(payment);
+  }
 }

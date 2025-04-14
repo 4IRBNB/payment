@@ -10,10 +10,16 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
-@Entity
 @NoArgsConstructor
+@Entity
+@SQLDelete(sql = "UPDATE p_payment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@FilterDef(name = "deletedFilter")
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 @Table(name = "p_payment")
 public class Payment extends BaseEntity {
 
