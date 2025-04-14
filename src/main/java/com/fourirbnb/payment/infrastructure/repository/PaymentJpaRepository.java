@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentJpaRepository extends JpaRepository<Payment, UUID> {
 
+  boolean existsByReservationId(UUID reservationId);
 }

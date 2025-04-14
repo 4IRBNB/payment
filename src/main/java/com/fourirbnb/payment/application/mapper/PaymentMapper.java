@@ -1,5 +1,6 @@
 package com.fourirbnb.payment.application.mapper;
 
+import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
 import com.fourirbnb.payment.domain.model.Payment;
 import com.fourirbnb.payment.domain.model.PaymentStatus;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 
 public class PaymentMapper {
 
-  public static Payment toEntity(CreatePaymentRequestDto request) {
+  public static Payment toEntity(CreatePaymentRequestInternalDto request) {
 
     return new Payment(request.reservationId(), request.amount(),
         request.couponUsage(), PaymentStatus.COMPLETED);
