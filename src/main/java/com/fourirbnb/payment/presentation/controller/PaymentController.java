@@ -4,9 +4,11 @@ import com.fourirbnb.common.response.BaseResponse;
 import com.fourirbnb.common.response.Pagination;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
+import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.service.PaymentService;
 import com.fourirbnb.payment.presentation.dto.CreatePaymentRequestDto;
 import com.fourirbnb.payment.presentation.dto.PaymentResponseDto;
+import com.fourirbnb.payment.presentation.dto.UpdatePaymentRequestDto;
 import com.fourirbnb.payment.presentation.mapper.PaymentDtoMapper;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,7 +75,7 @@ public class PaymentController {
     );
   }
 
-  @GetMapping("/")
+  @GetMapping("/reservation")
   public BaseResponse<PaymentResponseDto> getPaymentByReservationId(
       @RequestParam UUID reservationId) {
 
@@ -81,6 +84,21 @@ public class PaymentController {
     return BaseResponse.SUCCESS(
         PaymentDtoMapper.toResponse(response),
         "예약 정보로 결제 조회 성공", HttpStatus.OK.value()
+    );
+  }
+
+  @PatchMapping("/{paymentId}")
+  public BaseResponse<PaymentResponseDto> updatePaymentStatus(
+      @PathVariable UUID paymentId, @RequestBody UpdatePaymentRequestDto request) {
+
+    UpdatePaymentRequestInternalDto internalDto = PaymentDtoMapper.toUpdateInternalDto(request);
+
+    PaymentResponseInternalDto response = paymentService
+        .updatePaymentStatus(paymentId, internalDto);
+
+    return BaseResponse.SUCCESS(
+        PaymentDtoMapper.toResponse(response),
+        "예약 상태 수정 성공", HttpStatus.OK.value()
     );
   }
 }

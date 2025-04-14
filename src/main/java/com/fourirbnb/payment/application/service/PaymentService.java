@@ -3,8 +3,10 @@ package com.fourirbnb.payment.application.service;
 import com.fourirbnb.common.exception.ResourceNotFoundException;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
+import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.mapper.PaymentMapper;
 import com.fourirbnb.payment.domain.model.Payment;
+import com.fourirbnb.payment.domain.model.PaymentStatus;
 import com.fourirbnb.payment.domain.repository.PaymentRepository;
 import com.fourirbnb.payment.domain.service.PaymentDomainService;
 import java.util.UUID;
@@ -42,20 +44,36 @@ public class PaymentService {
     return PaymentMapper.toResponse(payment);
   }
 
+  @Transactional(readOnly = true)
   public Page<PaymentResponseInternalDto> getPayments(Pageable pageable) {
 
     Page<Payment> paymentPage = paymentRepository.findAll(pageable);
 
-    if(!paymentPage.hasContent()) {
+    if (!paymentPage.hasContent()) {
       throw new ResourceNotFoundException("결제 조회 실패 : 결제 목록 없음");
     }
     return PaymentMapper.toResponsePage(paymentPage);
   }
 
+  @Transactional(readOnly = true)
   public PaymentResponseInternalDto getPaymentByReservationId(UUID reservationId) {
 
     Payment payment = paymentRepository.findByReservationId(reservationId)
         .orElseThrow(() -> new ResourceNotFoundException("결제 조회 실패 : 예약 정보 없음"));
+
+    return PaymentMapper.toResponse(payment);
+  }
+
+  @Transactional
+  public PaymentResponseInternalDto updatePaymentStatus(
+      UUID paymentId, UpdatePaymentRequestInternalDto request) {
+
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new ResourceNotFoundException("결제 상태 수정 실패 : 존재하지 않는 결제 정보"));
+
+    payment.update(PaymentStatus.valueOf(request.paymentStatus()));
+
+    paymentRepository.save(payment);
 
     return PaymentMapper.toResponse(payment);
   }
