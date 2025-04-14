@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 public enum PaymentStatus {
-  COMPLETED("COMPETED"),
+  COMPLETED("COMPLETED"),
   CANCELLED("CANCELLED");
 
   private final String status;

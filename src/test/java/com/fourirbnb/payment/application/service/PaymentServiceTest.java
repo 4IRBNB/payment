@@ -1,11 +1,14 @@
 package com.fourirbnb.payment.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fourirbnb.payment.PaymentApplication;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
+import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
+import com.fourirbnb.payment.domain.model.PaymentStatus;
 import com.fourirbnb.payment.domain.repository.PaymentRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -45,6 +48,8 @@ class PaymentServiceTest {
 
   private UUID paymentId;
 
+  private PaymentStatus paymentStatus;
+
   @BeforeEach
   void setUp() {
     CreatePaymentRequestInternalDto internalDto = new CreatePaymentRequestInternalDto(
@@ -54,6 +59,7 @@ class PaymentServiceTest {
     PaymentResponseInternalDto payment = paymentService.createPayment(internalDto);
 
     paymentId = payment.id();
+    paymentStatus = PaymentStatus.valueOf(payment.paymentStatus());
   }
 
   @Test
@@ -111,5 +117,21 @@ class PaymentServiceTest {
 
     assertNotNull(findPayment);
     assertEquals(reservationId, findPayment.reservationId());
+  }
+
+  @Test
+  @DisplayName("결제 상태 변경 테스트")
+  @Order(5)
+  void updatePaymentStatus() {
+
+    UpdatePaymentRequestInternalDto request = new UpdatePaymentRequestInternalDto("CANCELLED");
+
+    PaymentResponseInternalDto updatePayment = paymentService
+        .updatePaymentStatus(paymentId, request);
+
+    log.info("Update Payment Status : {}", updatePayment.paymentStatus());
+
+    assertNotNull(updatePayment);
+    assertNotEquals(paymentStatus.getStatus(), updatePayment.paymentStatus());
   }
 }
