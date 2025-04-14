@@ -124,14 +124,30 @@ class PaymentServiceTest {
   @Test
   @DisplayName("결제 상태 변경 테스트")
   @Order(5)
-  void updatePaymentStatus() {
+  void updatePaymentStatusById() {
 
     UpdatePaymentRequestInternalDto request = new UpdatePaymentRequestInternalDto("CANCELLED");
 
     PaymentResponseInternalDto updatePayment = paymentService
-        .updatePaymentStatus(paymentId, request);
+        .updatePaymentStatusById(paymentId, request);
 
-    log.info("Update Payment Status : {}", updatePayment.paymentStatus());
+    log.info("Payment Id : {}", paymentId);
+
+    assertNotNull(updatePayment);
+    assertNotEquals(paymentStatus.getStatus(), updatePayment.paymentStatus());
+  }
+
+  @Test
+  @DisplayName("예약 정보로 결제 상태 변경 테스트")
+  @Order(6)
+  void updatePaymentStatusByReservationId() {
+
+    UpdatePaymentRequestInternalDto request = new UpdatePaymentRequestInternalDto("CANCELLED");
+
+    PaymentResponseInternalDto updatePayment = paymentService
+        .updatePaymentStatusByReservationId(reservationId, request);
+
+    log.info("Reservation Id : {}", reservationId);
 
     assertNotNull(updatePayment);
     assertNotEquals(paymentStatus.getStatus(), updatePayment.paymentStatus());
@@ -139,7 +155,7 @@ class PaymentServiceTest {
 
   @Test
   @DisplayName("결제 삭제 테스트")
-  @Order(6)
+  @Order(7)
   void deletePayment() {
 
     PaymentResponseInternalDto deletePayment = paymentService.deletePaymentById(paymentId);

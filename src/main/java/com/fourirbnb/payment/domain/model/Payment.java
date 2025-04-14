@@ -17,7 +17,6 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @NoArgsConstructor
 @Entity
-@SQLDelete(sql = "UPDATE p_payment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @FilterDef(name = "deletedFilter")
 @Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 @Table(name = "p_payment")

@@ -95,7 +95,22 @@ public class PaymentController {
     UpdatePaymentRequestInternalDto internalDto = PaymentDtoMapper.toUpdateInternalDto(request);
 
     PaymentResponseInternalDto response = paymentService
-        .updatePaymentStatus(paymentId, internalDto);
+        .updatePaymentStatusById(paymentId, internalDto);
+
+    return BaseResponse.SUCCESS(
+        PaymentDtoMapper.toResponse(response),
+        "결제 상태 변경 성공", HttpStatus.OK.value()
+    );
+  }
+
+  @PatchMapping("/reservation")
+  public BaseResponse<PaymentResponseDto> updatePaymentStatusByReservationId(
+      @RequestParam UUID reservationId, @RequestBody UpdatePaymentRequestDto request) {
+
+    UpdatePaymentRequestInternalDto internalDto = PaymentDtoMapper.toUpdateInternalDto(request);
+
+    PaymentResponseInternalDto response = paymentService
+        .updatePaymentStatusByReservationId(reservationId, internalDto);
 
     return BaseResponse.SUCCESS(
         PaymentDtoMapper.toResponse(response),
