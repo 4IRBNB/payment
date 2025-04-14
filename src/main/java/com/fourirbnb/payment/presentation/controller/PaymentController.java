@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,7 +99,18 @@ public class PaymentController {
 
     return BaseResponse.SUCCESS(
         PaymentDtoMapper.toResponse(response),
-        "예약 상태 수정 성공", HttpStatus.OK.value()
+        "결제 상태 변경 성공", HttpStatus.OK.value()
+    );
+  }
+
+  @DeleteMapping("/{paymentId}")
+  public BaseResponse<PaymentResponseDto> deletePayment(@PathVariable UUID paymentId) {
+
+    PaymentResponseInternalDto response = paymentService.deletePaymentById(paymentId);
+
+    return BaseResponse.SUCCESS(
+        PaymentDtoMapper.toResponse(response),
+        "결제 삭제 성공", HttpStatus.OK.value()
     );
   }
 }

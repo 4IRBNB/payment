@@ -40,6 +40,12 @@ public class PaymentRepositoryImpl implements PaymentRepository {
   }
 
   @Override
+  public void deleteById(UUID paymentId) {
+
+    jpaRepository.deleteById(paymentId);
+  }
+
+  @Override
   public boolean existsByReservationId(UUID reservationId) {
 
     return jpaRepository.existsByReservationId(reservationId);
