@@ -38,8 +38,7 @@ public class PaymentService {
   @Transactional(readOnly = true)
   public PaymentResponseInternalDto getPaymentById(UUID paymentId) {
 
-    Payment payment = paymentRepository.findById(paymentId)
-        .orElseThrow(() -> new ResourceNotFoundException("결제 조회 실패 : 존재하지 않는 결제 정보"));
+    Payment payment = findPaymentById(paymentId);
 
     return PaymentMapper.toResponse(payment);
   }
@@ -49,27 +48,24 @@ public class PaymentService {
 
     Page<Payment> paymentPage = paymentRepository.findAll(pageable);
 
-    if (!paymentPage.hasContent()) {
-      throw new ResourceNotFoundException("결제 조회 실패 : 결제 목록 없음");
-    }
+    isPageHasContent(paymentPage);
+
     return PaymentMapper.toResponsePage(paymentPage);
   }
 
   @Transactional(readOnly = true)
   public PaymentResponseInternalDto getPaymentByReservationId(UUID reservationId) {
 
-    Payment payment = paymentRepository.findByReservationId(reservationId)
-        .orElseThrow(() -> new ResourceNotFoundException("결제 조회 실패 : 예약 정보 없음"));
+    Payment payment = findPaymentByReservationId(reservationId);
 
     return PaymentMapper.toResponse(payment);
   }
 
   @Transactional
-  public PaymentResponseInternalDto updatePaymentStatus(
+  public PaymentResponseInternalDto updatePaymentStatusById(
       UUID paymentId, UpdatePaymentRequestInternalDto request) {
 
-    Payment payment = paymentRepository.findById(paymentId)
-        .orElseThrow(() -> new ResourceNotFoundException("결제 상태 수정 실패 : 존재하지 않는 결제 정보"));
+    Payment payment = findPaymentById(paymentId);
 
     payment.update(PaymentStatus.valueOf(request.paymentStatus()));
 
@@ -78,13 +74,44 @@ public class PaymentService {
     return PaymentMapper.toResponse(payment);
   }
 
-  public PaymentResponseInternalDto deletePaymentById(UUID paymentId) {
+  public PaymentResponseInternalDto updatePaymentStatusByReservationId(
+      UUID reservationId, UpdatePaymentRequestInternalDto internalDto) {
 
-    Payment payment = paymentRepository.findById(paymentId)
-        .orElseThrow(() -> new ResourceNotFoundException("결제 삭제 실패 : 존재하지 않는 결제 정보"));
+    Payment payment = findPaymentByReservationId(reservationId);
 
-    paymentRepository.deleteById(paymentId);
+    payment.update(PaymentStatus.valueOf(internalDto.paymentStatus()));
 
     return PaymentMapper.toResponse(payment);
+  }
+
+  @Transactional
+  public PaymentResponseInternalDto deletePaymentById(UUID paymentId) {
+
+    Payment payment = findPaymentById(paymentId);
+
+    payment.delete(1L);
+
+    paymentRepository.save(payment);
+
+    return PaymentMapper.toResponse(payment);
+  }
+
+  private Payment findPaymentById(UUID paymentId) {
+
+    return paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new ResourceNotFoundException("Payment Not Found : " + paymentId));
+  }
+
+  private Payment findPaymentByReservationId(UUID reservationId) {
+
+    return paymentRepository.findByReservationId(reservationId)
+        .orElseThrow(() -> new ResourceNotFoundException("Payment Not Found : " + reservationId));
+  }
+
+  private void isPageHasContent(Page<Payment> paymentPage) {
+
+    if(!paymentPage.hasContent()) {
+      throw new ResourceNotFoundException("Not Found Payment Page");
+    }
   }
 }
