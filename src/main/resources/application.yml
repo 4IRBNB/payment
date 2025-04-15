@@ -4,6 +4,9 @@ spring:
 
 ---
 
+server:
+  port: 19096
+
 spring:
   config:
     activate:

@@ -10,6 +10,7 @@ import com.fourirbnb.payment.PaymentApplication;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
 import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
+import com.fourirbnb.payment.config.FeignConfig;
 import com.fourirbnb.payment.domain.model.PaymentStatus;
 import com.fourirbnb.payment.domain.repository.PaymentRepository;
 import jakarta.persistence.EntityManager;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 @Slf4j
 @Transactional
+@Import(FeignConfig.class)
 class PaymentServiceTest {
 
   @PersistenceContext
@@ -161,6 +164,8 @@ class PaymentServiceTest {
     PaymentResponseInternalDto deletePayment = paymentService.deletePaymentById(paymentId);
 
     log.info("Delete Payment Id : {}", deletePayment.id());
+
+    entityManager.clear();
 
     assertThrows(ResourceNotFoundException.class, () -> {
       paymentService.getPaymentById(paymentId);

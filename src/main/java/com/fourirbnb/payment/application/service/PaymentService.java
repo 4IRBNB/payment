@@ -1,5 +1,6 @@
 package com.fourirbnb.payment.application.service;
 
+import com.fourirbnb.common.exception.InternalServerException;
 import com.fourirbnb.common.exception.ResourceNotFoundException;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
@@ -7,6 +8,8 @@ import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.mapper.PaymentMapper;
 import com.fourirbnb.payment.domain.model.Payment;
 import com.fourirbnb.payment.domain.model.PaymentStatus;
+import com.fourirbnb.payment.domain.model.ReservationData;
+import com.fourirbnb.payment.domain.port.ReservationPort;
 import com.fourirbnb.payment.domain.repository.PaymentRepository;
 import com.fourirbnb.payment.domain.service.PaymentDomainService;
 import java.util.UUID;
@@ -22,6 +25,7 @@ public class PaymentService {
 
   private final PaymentRepository paymentRepository;
   private final PaymentDomainService paymentDomainService;
+  private final ReservationPort reservationPort;
 
   @Transactional
   public PaymentResponseInternalDto createPayment(CreatePaymentRequestInternalDto internalDto) {
@@ -71,15 +75,48 @@ public class PaymentService {
 
     paymentRepository.save(payment);
 
+    try {
+
+      ReservationData data = reservationPort.toDomainModel(
+          reservationPort.updateReservationStatus(payment.getReservationId(), "CANCELLED")
+      );
+
+    } catch (Exception e) {
+
+      payment.update(PaymentStatus.COMPLETED);
+
+      paymentRepository.save(payment);
+
+      throw new InternalServerException(e.getMessage());
+    }
+
     return PaymentMapper.toResponse(payment);
   }
 
+  @Transactional
   public PaymentResponseInternalDto updatePaymentStatusByReservationId(
       UUID reservationId, UpdatePaymentRequestInternalDto internalDto) {
 
     Payment payment = findPaymentByReservationId(reservationId);
 
     payment.update(PaymentStatus.valueOf(internalDto.paymentStatus()));
+
+    paymentRepository.save(payment);
+
+    try {
+
+      ReservationData data = reservationPort.toDomainModel(
+          reservationPort.updateReservationStatus(reservationId, "CANCELLED")
+      );
+
+    } catch (Exception e) {
+
+      payment.update(PaymentStatus.COMPLETED);
+
+      paymentRepository.save(payment);
+
+      throw new InternalServerException(e.getMessage());
+    }
 
     return PaymentMapper.toResponse(payment);
   }
@@ -110,7 +147,7 @@ public class PaymentService {
 
   private void isPageHasContent(Page<Payment> paymentPage) {
 
-    if(!paymentPage.hasContent()) {
+    if (!paymentPage.hasContent()) {
       throw new ResourceNotFoundException("Not Found Payment Page");
     }
   }
