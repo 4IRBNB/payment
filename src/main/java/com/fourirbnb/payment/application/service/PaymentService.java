@@ -83,7 +83,7 @@ public class PaymentService {
 
     } catch (Exception e) {
 
-      payment.update(PaymentStatus.COMPLETED);
+      payment.complete();
 
       paymentRepository.save(payment);
 
@@ -111,7 +111,7 @@ public class PaymentService {
 
     } catch (Exception e) {
 
-      payment.update(PaymentStatus.COMPLETED);
+      payment.complete();
 
       paymentRepository.save(payment);
 
