@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @NoArgsConstructor
@@ -51,5 +50,15 @@ public class Payment extends BaseEntity {
   public void update(PaymentStatus paymentStatus) {
 
     this.paymentStatus = paymentStatus;
+  }
+
+  public void complete() {
+
+    this.paymentStatus = PaymentStatus.COMPLETED;
+  }
+
+  public void cancel() {
+
+    this.paymentStatus = PaymentStatus.CANCELLED;
   }
 }
