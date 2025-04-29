@@ -3,6 +3,9 @@ server:
   address: 0.0.0.0
 
 eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 43.203.199.124
   client:
     service-url:
       defaultZone: http://43.203.174.245:19090/eureka/
@@ -24,10 +27,6 @@ spring:
     properties:
       hibernate:
         default_schema: payments
-  data:
-    redis:
-      host: team26redis-3bjj75.serverless.apn2.cache.amazonaws.com
-      port: 6379
 
 common:
   jpa:
