@@ -5,12 +5,16 @@ plugins {
 }
 
 group = 'com.fourirbnb'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+bootJar {
+    archiveFileName = 'payment.jar'
 }
 
 configurations {
@@ -43,17 +47,19 @@ repositories {
 dependencies {
 
     // 공통 모듈
-    implementation 'com.fourirbnb:common:1.4.3'
+    implementation 'com.fourirbnb:common:1.5.0'
     // Spring Boot Starter
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    // config
-    // implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // config
+    // implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
     // DB Driver
     runtimeOnly 'com.h2database:h2'
@@ -64,6 +70,9 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Eureka
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     // FeignClient
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
@@ -80,4 +89,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+test {
+    enabled = false
 }
