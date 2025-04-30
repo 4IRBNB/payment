@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: 4IRBNB-db-payment
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: 4IRBNB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fourirbnb
+    ports:
+      - "5433:5432"  # 결제 서비스의 포트를 예약 서비스와 구분
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - 4IRBNB-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-payment
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # 결제 서비스의 포트를 예약 서비스와 구분
+    command: redis-server --appendonly yes --appendfsync everysec
+    volumes:
+      - redis_data:/data
+    networks:
+      - 4IRBNB-network
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-payment
+    restart: unless-stopped
+    ports:
+      - "9412:9411"  # 결제 서비스의 Zipkin 포트를 예약 서비스와 구분
+    networks:
+      - 4IRBNB-network
+
+  # 예약 서비스에서 Zookeeper, Kafka 관련 설정을 이미 처리했으므로 결제 서비스에서는 Kafka와 Zookeeper 설정 제거
+  # Kafka를 사용하려면 예약 서비스에서 관리하는 Kafka와 연결만 하면 됩니다.
+
+networks:
+  4IRBNB-network:
+    external: true  # 예약 서비스에서 정의한 네트워크를 사용
+
+volumes:
+  postgres-data:
+    name: postgres_data
+  redis_data:
+    name: redis_data

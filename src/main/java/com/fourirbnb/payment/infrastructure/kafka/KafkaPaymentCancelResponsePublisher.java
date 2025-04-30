@@ -2,7 +2,6 @@ package com.fourirbnb.payment.infrastructure.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourirbnb.payment.application.event.PaymentCancelResponseEvent;
-import com.fourirbnb.payment.application.event.PaymentResponseEvent;
 import com.fourirbnb.payment.domain.port.PaymentCancelResponsePublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

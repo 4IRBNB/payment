@@ -5,9 +5,11 @@ import com.fourirbnb.payment.application.event.PaymentCancelResponseEvent;
 import com.fourirbnb.payment.domain.port.PaymentCancelResponsePublisher;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PaymentCancelHandler {
@@ -23,7 +25,7 @@ public class PaymentCancelHandler {
       PaymentCancelResponseEvent response = processor.cancel(reservationId);
       publisher.publish(response);
     } catch (Exception e) {
-      // log
+      log.info("Error canceling payment: {}", e.getMessage());
     }
   }
 }

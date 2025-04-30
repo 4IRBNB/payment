@@ -19,7 +19,7 @@ public class PaymentProcessor {
 
     PaymentResponseInternalDto response = paymentService.createPaymentFromEvent(event);
 
-    return new PaymentResponseEvent(event.reservationId(), response.id(), success);
+    return new PaymentResponseEvent(response.id(),event.reservationId(), success);
   }
 
   public PaymentCancelResponseEvent cancel(UUID reservationId) {
