@@ -5,6 +5,7 @@ import com.fourirbnb.common.exception.ResourceNotFoundException;
 import com.fourirbnb.payment.application.dto.CreatePaymentRequestInternalDto;
 import com.fourirbnb.payment.application.dto.PaymentResponseInternalDto;
 import com.fourirbnb.payment.application.dto.UpdatePaymentRequestInternalDto;
+import com.fourirbnb.payment.application.event.PaymentRequestEvent;
 import com.fourirbnb.payment.application.mapper.PaymentMapper;
 import com.fourirbnb.payment.domain.model.Payment;
 import com.fourirbnb.payment.domain.model.PaymentStatus;
@@ -31,6 +32,20 @@ public class PaymentService {
   public PaymentResponseInternalDto createPayment(CreatePaymentRequestInternalDto internalDto) {
 
     Payment payment = PaymentMapper.toEntity(internalDto);
+
+    paymentDomainService.validatePaymentAvailable(payment);
+
+    paymentRepository.save(payment);
+
+    return PaymentMapper.toResponse(payment);
+  }
+
+  @Transactional
+  public PaymentResponseInternalDto createPaymentFromEvent(PaymentRequestEvent event) {
+
+    Payment payment = new Payment(
+        event.reservationId(), event.amount(), event.couponUsage(), PaymentStatus.COMPLETED
+    );
 
     paymentDomainService.validatePaymentAvailable(payment);
 

@@ -1,0 +1,33 @@
+server:
+  port: 19096
+  address: 0.0.0.0
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 43.203.199.124
+  client:
+    service-url:
+      defaultZone: http://43.203.174.245:19090/eureka/
+
+spring:
+  application:
+    name: payment
+  datasource:
+    initialize: true
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: team4irbnb
+    url: jdbc:postgresql://team26.cxqqm2i6ohrd.ap-northeast-2.rds.amazonaws.com:5432/postgres?currentSchema=payments
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  # PostgreSQL Dialect
+    properties:
+      hibernate:
+        default_schema: payments
+
+common:
+  jpa:
+    enabled: true

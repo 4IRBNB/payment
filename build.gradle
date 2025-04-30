@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.fourirbnb'
-version = '1.0.0'
+version = '1.0.0-SNAPSHOT'
 
 java {
     toolchain {
@@ -58,6 +58,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // config
+    // implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
     // DB Driver
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
@@ -68,14 +71,18 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-    // FeignClient
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
     // Eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
+    // FeignClient
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
